@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KSP Artha Mulya 2</title>
+    <!-- Handsontable CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.css"
+    />
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Flatpickr CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
+    />
+    <style>
+      /* Menyesuaikan tinggi tabel agar tampil lebih baik */
+      .ht_master {
+        max-height: 400px;
+        overflow-y: auto;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100">
+    <div
+      class="container w-[60%] mx-auto mt-10 p-5 bg-white shadow-lg rounded-lg"
+    >
+      <h2 class="text-2xl font-bold mb-4 text-center text-gray-700">
+        Input Buku Rekap (JD)
+      </h2>
+
+      <!-- Datepicker for Tanggal -->
+      <div class="flex items-center justify-center w-full">
+        <div class="mb-5 w-[30%] flex-col items-center justify-center">
+          <input
+            type="text"
+            id="tanggal"
+            class="border border-gray-300 p-2 rounded w-full"
+            placeholder="Pilih tanggal"
+          />
+        </div>
+      </div>
+
+      <div class="flex items-center justify-center w-full">
+        <div id="spreadsheet" class="mb-5"></div>
+      </div>
+
+      <div class="flex items-center justify-center">
+        <button
+          id="submitBtn"
+          class="w-[100px] bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Submit
+        </button>
+      </div>
+    </div>
+
+    <!-- Handsontable JS -->
+    <script src="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.js"></script>
+    <!-- Flatpickr JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <script>
+      // Inisialisasi Flatpickr (Datepicker)
+      flatpickr("#tanggal", {
+        dateFormat: "Y-m-d",
+        onChange: function (selectedDates, dateStr, instance) {
+          console.log("Tanggal dipilih:", dateStr);
+        },
+      });
+
+      // Fungsi untuk memformat angka menjadi format Rupiah
+      function formatRupiah(value) {
+        return value
+          ? "Rp " + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+          : "";
+      }
+
+      // Fungsi untuk mengembalikan angka dari format Rupiah
+      function parseRupiah(value) {
+        return Number(value.replace(/[^0-9.-]+/g, ""));
+      }
+
+      // Inisialisasi Handsontable
+      const container = document.getElementById("spreadsheet");
+      const hot = new Handsontable(container, {
+        data: [["1"], ["2"], ["3"], ["4"], ["5"], ["6"]],
+        colHeaders: [
+          "Resor",
+          "Anggota Awal",
+          "Anggota Baru",
+          "Anggota Keluar",
+          "Target",
+          "Storting",
+          "Drop Lama",
+          "Drop Baru",
+          "Keluar 5%",
+        ],
+        columns: [
+          { type: "text" }, // Resor
+          { type: "numeric" }, // Anggota Awal
+          { type: "numeric" }, // Anggota Baru
+          { type: "numeric" }, // Anggota Keluar
+          {
+            type: "numeric",
+            renderer: (instance, td, row, col, prop, value, cellProperties) => {
+              td.innerHTML = formatRupiah(value); // Format nilai ke Rupiah
+              return td;
+            },
+            editor: "numeric", // Mengizinkan input angka
+          },
+          {
+            type: "numeric",
+            renderer: (instance, td, row, col, prop, value, cellProperties) => {
+              td.innerHTML = formatRupiah(value); // Format nilai ke Rupiah
+              return td;
+            },
+            editor: "numeric", // Mengizinkan input angka
+          },
+          {
+            type: "numeric",
+            renderer: (instance, td, row, col, prop, value, cellProperties) => {
+              td.innerHTML = formatRupiah(value); // Format nilai ke Rupiah
+              return td;
+            },
+            editor: "numeric", // Mengizinkan input angka
+          },
+          {
+            type: "numeric",
+            renderer: (instance, td, row, col, prop, value, cellProperties) => {
+              td.innerHTML = formatRupiah(value); // Format nilai ke Rupiah
+              return td;
+            },
+            editor: "numeric", // Mengizinkan input angka
+          },
+          {
+            type: "numeric",
+            renderer: (instance, td, row, col, prop, value, cellProperties) => {
+              td.innerHTML = formatRupiah(value); // Format nilai ke Rupiah
+              return td;
+            },
+            editor: "numeric", // Mengizinkan input angka
+          },
+        ],
+        className: "htCenter", // Menambahkan kelas htCenter untuk meratakan teks ke tengah
+        rowHeaders: false, // Menghilangkan row headers (nomor baris)
+        contextMenu: true, // Menu klik kanan untuk edit, tambah, hapus baris/kolom
+        // minSpareRows: 1, // Menambahkan baris kosong di akhir untuk input tambahan
+        licenseKey: "non-commercial-and-evaluation", // Jika menggunakan versi gratis
+      });
+
+      // Aksi saat tombol Submit diklik
+      document
+        .getElementById("submitBtn")
+        .addEventListener("click", function () {
+          const data = hot.getData(); // Mengambil data dari spreadsheet
+          const tanggal = document.getElementById("tanggal").value; // Mengambil nilai datepicker
+          console.log("Tanggal:", tanggal);
+          console.log(
+            "Data spreadsheet:",
+            data.map((row) =>
+              row.map((cell, index) => {
+                if (index > 0) return parseRupiah(cell); // Parse nilai Rupiah kembali ke angka
+                return cell;
+              })
+            )
+          ); // Menampilkan data di konsol, atau bisa diproses untuk dikirim ke backend
+          alert("Data submitted. Lihat konsol untuk data yang diambil.");
+        });
+    </script>
+  </body>
+</html>
