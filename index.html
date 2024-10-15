@@ -22,6 +22,26 @@
         max-height: 400px;
         overflow-y: auto;
       }
+      #spreadsheet {
+        height: 30vh; /* Menyesuaikan tinggi Handsontable */
+        width: 100%; /* Menyesuaikan lebar Handsontable */
+        overflow: hidden;
+      }
+
+      /* Memastikan tampilan spreadsheet responsif pada perangkat yang lebih kecil */
+      @media (max-width: 768px) {
+        #spreadsheet {
+          height: 60vh; /* Lebih rendah di layar kecil */
+          font-size: 0.8rem; /* Ukuran font lebih kecil */
+        }
+      }
+
+      @media (max-width: 480px) {
+        #spreadsheet {
+          height: 50vh;
+          font-size: 0.7rem;
+        }
+      }
     </style>
   </head>
   <body class="bg-gray-100">
@@ -44,7 +64,7 @@
         </div>
       </div>
 
-      <div class="flex items-center justify-center w-full">
+      <div class="flex items-center justify-center md:ml-20">
         <div id="spreadsheet" class="mb-5"></div>
       </div>
 
